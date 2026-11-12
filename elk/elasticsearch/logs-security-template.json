@@ -1,0 +1,34 @@
+{
+  "index_patterns": ["logs-security-*"],
+  "priority": 500,
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp":  { "type": "date" },
+        "level":       { "type": "keyword" },
+        "service":     { "type": "keyword" },
+        "event_type":  { "type": "keyword" },
+        "src_ip":      { "type": "ip", "ignore_malformed": true },
+        "username":    { "type": "keyword" },
+        "message":     { "type": "text", "fields": { "keyword": { "type": "keyword", "ignore_above": 512 } } },
+        "source_type": { "type": "keyword" },
+        "tags":        { "type": "keyword" },
+        "geo": {
+          "properties": {
+            "ip":            { "type": "ip" },
+            "location":      { "type": "geo_point" },
+            "country_name":  { "type": "keyword" },
+            "country_code2": { "type": "keyword" },
+            "city_name":     { "type": "keyword" },
+            "continent_code":{ "type": "keyword" },
+            "timezone":      { "type": "keyword" }
+          }
+        }
+      }
+    }
+  }
+}
