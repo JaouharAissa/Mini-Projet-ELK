@@ -71,6 +71,16 @@ services:
       timeout: 5s
       retries: 10
 
+  uploads-init:
+    image: busybox:1.36
+    container_name: uploads-init
+    command: sh -c "mkdir -p /data/uploads/csv /data/uploads/json /data/uploads/tmp && chmod -R 777 /data/uploads"
+    volumes:
+      - uploads-data:/data/uploads
+    restart: "no"
+    networks:
+      - elk-net
+
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
     container_name: logstash
@@ -86,6 +96,8 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+      uploads-init:
+        condition: service_completed_successfully
     networks:
       - elk-net
     healthcheck:
@@ -93,6 +105,32 @@ services:
       interval: 15s
       timeout: 10s
       retries: 20
+
+  webapp:
+    build: ./webapp
+    container_name: webapp
+    env_file:
+      - .env
+    volumes:
+      - uploads-data:/data/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      uploads-init:
+        condition: service_completed_successfully
+    networks:
+      - elk-net
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/')\""]
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
 volumes:
   es-data:

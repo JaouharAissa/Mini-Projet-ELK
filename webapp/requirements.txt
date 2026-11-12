@@ -1,0 +1,5 @@
+Flask==3.0.3
+gunicorn==22.0.0
+pymongo==4.7.3
+redis==5.0.7
+elasticsearch==8.13.2
