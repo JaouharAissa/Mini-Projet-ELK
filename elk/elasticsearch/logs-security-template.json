@@ -17,6 +17,7 @@
         "message":     { "type": "text", "fields": { "keyword": { "type": "keyword", "ignore_above": 512 } } },
         "source_type": { "type": "keyword" },
         "tags":        { "type": "keyword" },
+        "uploaded_file": { "type": "keyword" },
         "geo": {
           "properties": {
             "ip":            { "type": "ip" },

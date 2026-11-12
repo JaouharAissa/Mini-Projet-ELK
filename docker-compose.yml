@@ -81,6 +81,25 @@ services:
     networks:
       - elk-net
 
+  es-init:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    container_name: es-init
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - >
+        curl -sf -X PUT http://elasticsearch:9200/_index_template/logs-security
+        -H 'Content-Type: application/json'
+        --data-binary @/init/logs-security-template.json
+        && echo ' es-init: template loaded'
+    volumes:
+      - ./elk/elasticsearch/logs-security-template.json:/init/logs-security-template.json:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - elk-net
+
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
     container_name: logstash
@@ -97,6 +116,8 @@ services:
       elasticsearch:
         condition: service_healthy
       uploads-init:
+        condition: service_completed_successfully
+      es-init:
         condition: service_completed_successfully
     networks:
       - elk-net
@@ -123,6 +144,8 @@ services:
       redis:
         condition: service_healthy
       uploads-init:
+        condition: service_completed_successfully
+      es-init:
         condition: service_completed_successfully
     networks:
       - elk-net
