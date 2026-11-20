@@ -82,8 +82,11 @@ def main():
         for e in events:
             f.write(json.dumps(e) + "\n")
 
-    print(f"{len(events)} events written to {out}/security_logs.csv and .json")
+    with open(out / "security_logs.txt", "w") as f:
+        for e in events:
+            f.write(" ".join(e[c] for c in cols) + "\n")
 
+    print(f"{len(events)} events written to {out}/security_logs.csv, .json and .txt")
 
 if __name__ == "__main__":
     main()

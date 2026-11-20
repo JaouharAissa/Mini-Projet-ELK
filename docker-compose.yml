@@ -74,7 +74,7 @@ services:
   uploads-init:
     image: busybox:1.36
     container_name: uploads-init
-    command: sh -c "mkdir -p /data/uploads/csv /data/uploads/json /data/uploads/tmp && chmod -R 777 /data/uploads"
+    command: sh -c "mkdir -p /data/uploads/csv /data/uploads/json /data/uploads/txt /data/uploads/tmp && chmod -R 777 /data/uploads"
     volumes:
       - uploads-data:/data/uploads
     restart: "no"
