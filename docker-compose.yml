@@ -115,6 +115,8 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+      webapp:
+        condition: service_healthy
       uploads-init:
         condition: service_completed_successfully
       es-init:
